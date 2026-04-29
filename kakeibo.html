@@ -152,8 +152,8 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
         <div class="day-label" id="day-label"></div>
         <button onclick="chDay(1)">→</button>
       </div>
-      <div id="day-cats"></div>
       <div class="card"><div id="day-total"></div></div>
+      <div id="day-cats"></div>
       <div class="card"><div class="st">週次ペース</div><div id="week-sum"></div></div>
     </div>
 
@@ -707,7 +707,7 @@ function renderAgg(){
     html=`<div class="card"><div class="st">月次集計（${y}年）</div>`;
     VCATS.forEach(cat=>{
       const col=CCOLS[cat]||'#888';
-      html+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:${col}"></div><span style="font-size:14px;font-weight:600">${cat} （月予算 ${fmt(monthBud)}）</span></div>`;
+      html+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:${col}"></div><span style="font-size:14px;font-weight:600">${cat}</span></div>`;
       for(let mo=0;mo<12;mo++){
         const mk2=y+'-'+String(mo+1).padStart(2,'0');
         const moBuds=getBudsForMonth(mk2);
@@ -794,7 +794,9 @@ function renderAgg(){
     };
 
     setTimeout(()=>{
-      if(aggChart)aggChart.destroy();
+      ['aggExpChart','aggIncChart','aggBalChart'].forEach(id=>{
+        const c=Chart.getChart(id);if(c)c.destroy();
+      });
 
       const ctxExp=document.getElementById('aggExpChart');
       if(ctxExp){
@@ -827,11 +829,7 @@ function renderAgg(){
           scales:{...commonScales,y:{...commonScales.y,ticks:{...commonScales.y.ticks,callback:yFmt}}}}});
       }
 
-      aggChart={destroy:()=>{
-        ['aggExpChart','aggIncChart','aggBalChart'].forEach(id=>{
-          const c=Chart.getChart(id);if(c)c.destroy();
-        });
-      }};
+      aggChart={destroy:()=>{}};
     },120);
   } else {
     const years=[];const now=new Date();
