@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0081)file:///C:/Users/%E5%A4%A7%E6%9C%A8%20%E7%91%9B%E7%99%BB/Downloads/kakeibo_5.html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="家計簿">
 <title>家計簿</title>
-<link rel="manifest" href="#" id="manifest-placeholder">
+<link rel="manifest" href="blob:null/db0e7283-76da-4d70-bc50-666b33fe2924" id="manifest-placeholder">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;font-size:15px;color:#1a1a18;overscroll-behavior:none}
@@ -96,42 +96,157 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
   <div class="top-bar">
     <div class="month-nav">
       <button onclick="chM(-1)">←</button>
-      <span id="mlabel"></span>
+      <span id="mlabel">2026年4月</span>
       <button onclick="chM(1)">→</button>
     </div>
   </div>
   <div class="tab-bar">
-    <button class="tab on" onclick="sTab('home',this)">ホーム</button>
-    <button class="tab" onclick="sTab('add',this)">追加</button>
-    <button class="tab" onclick="sTab('daily',this)">日次</button>
-    <button class="tab" onclick="sTab('social',this)">交際費</button>
-    <button class="tab" onclick="sTab('agg',this)">集計</button>
-    <button class="tab" onclick="sTab('ops',this)">運用</button>
-    <button class="tab" onclick="sTab('cfg',this)">設定</button>
+    <button class="tab on" onclick="sTab(&#39;home&#39;,this)">ホーム</button>
+    <button class="tab" onclick="sTab(&#39;add&#39;,this)">追加</button>
+    <button class="tab" onclick="sTab(&#39;daily&#39;,this)">日次</button>
+    <button class="tab" onclick="sTab(&#39;social&#39;,this)">交際費</button>
+    <button class="tab" onclick="sTab(&#39;agg&#39;,this)">集計</button>
+    <button class="tab" onclick="sTab(&#39;ops&#39;,this)">運用</button>
+    <button class="tab" onclick="sTab(&#39;cfg&#39;,this)">設定</button>
   </div>
   <div class="content">
 
     <div id="home" class="sec on">
       <div class="mg">
         <div class="metric"><div class="ml">収入合計</div><div class="mv green" id="h-inc">¥0</div></div>
-        <div class="metric"><div class="ml">支出合計</div><div class="mv red" id="h-exp">¥0</div></div>
-        <div class="metric"><div class="ml">固定費合計</div><div class="mv purple" id="h-fix">¥0</div></div>
-        <div class="metric"><div class="ml">当月残金</div><div class="mv blue" id="h-net">¥0</div></div>
+        <div class="metric"><div class="ml">支出合計</div><div class="mv red" id="h-exp">¥285,113</div></div>
+        <div class="metric"><div class="ml">固定費合計</div><div class="mv purple" id="h-fix">¥260,345</div></div>
+        <div class="metric"><div class="ml">当月残金</div><div class="mv blue" id="h-net">¥255,117</div></div>
       </div>
-      <div class="card"><div class="st">収入内訳</div><div id="h-inc-list"></div></div>
-      <div class="card"><div class="st">変動支出内訳</div><div id="h-exp-list"></div></div>
-      <div class="card"><div class="st">固定費内訳</div><div id="h-fix-list"></div></div>
-      <div class="card"><div class="st">最近の記録</div><div id="h-tx"></div></div>
+      <div class="card"><div class="st">収入内訳</div><div id="h-inc-list"><div class="empty">記録なし</div></div></div>
+      <div class="card"><div class="st">変動支出内訳</div><div id="h-exp-list"><div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:14px">食費</span>
+        <span style="font-size:14px;font-weight:600">¥19,296 <span style="font-size:11px;color:#888">7%</span></span>
+      </div>
+      <div class="bb"><div class="bar" style="width:7%;background:#D85A30"></div></div>
+    </div><div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:14px">日用品</span>
+        <span style="font-size:14px;font-weight:600">¥138,771 <span style="font-size:11px;color:#888">49%</span></span>
+      </div>
+      <div class="bb"><div class="bar" style="width:49%;background:#EF9F27"></div></div>
+    </div><div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:14px">交際費</span>
+        <span style="font-size:14px;font-weight:600">¥127,046 <span style="font-size:11px;color:#888">45%</span></span>
+      </div>
+      <div class="bb"><div class="bar" style="width:45%;background:#D4537E"></div></div>
+    </div></div></div>
+      <div class="card"><div class="st">固定費内訳</div><div id="h-fix-list">
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">家賃</div></div>
+      <div class="ta purple">¥90,330</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">水道代<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥4,532</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">電気代<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥5,744</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">ガス代<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥5,818</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">携帯料金<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥7,143</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">コンタクト<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥7,028</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">通信費<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥3,281</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">Spotify<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥1,080</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">NEFLIX<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥1,590</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">エニタイム</div></div>
+      <div class="ta purple">¥8,778</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">薬代<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥9,713</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">LUUP<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥980</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">不動産</div></div>
+      <div class="ta purple">¥75,436</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">日経新聞<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥4,277</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">ライフティ（RAX)<span class="badge-cc">クレカ</span></div></div>
+      <div class="ta purple">¥9,615</div></div>
+      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
+      <div class="ti"><div class="tn">三井住友カードローン</div></div>
+      <div class="ta purple">¥25,000</div></div><div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:0.5px solid rgba(0,0,0,0.1);font-size:14px;font-weight:600">
+        <span style="color:#888">合計</span><span class="purple">¥260,345</span></div></div></div>
+      <div class="card"><div class="st">最近の記録</div><div id="h-tx">
+    <div class="tr">
+      <div class="dot" style="background:#D85A30"></div>
+      <div class="ti"><div class="tn">食費</div><div class="ts2">食費 · 04/14</div></div>
+      <div class="ta red">-¥1,061</div>
+      <button class="del" onclick="delTx(1777453082446)">✕</button>
+    </div>
+    <div class="tr">
+      <div class="dot" style="background:#D85A30"></div>
+      <div class="ti"><div class="tn">食費</div><div class="ts2">食費 · 04/13</div></div>
+      <div class="ta red">-¥970</div>
+      <button class="del" onclick="delTx(1777453070056)">✕</button>
+    </div>
+    <div class="tr">
+      <div class="dot" style="background:#D85A30"></div>
+      <div class="ti"><div class="tn">食費</div><div class="ts2">食費 · 04/12</div></div>
+      <div class="ta red">-¥4,048</div>
+      <button class="del" onclick="delTx(1777453030210)">✕</button>
+    </div>
+    <div class="tr">
+      <div class="dot" style="background:#EF9F27"></div>
+      <div class="ti"><div class="tn">日用品</div><div class="ts2">日用品 · 04/12</div></div>
+      <div class="ta red">-¥4,645</div>
+      <button class="del" onclick="delTx(1777453037597)">✕</button>
+    </div>
+    <div class="tr">
+      <div class="dot" style="background:#888780"></div>
+      <div class="ti"><div class="tn">交際費</div><div class="ts2">交際費 / その他 · 04/12</div></div>
+      <div class="ta red">-¥2,030</div>
+      <button class="del" onclick="delTx(1777453046320)">✕</button>
+    </div>
+    <div class="tr">
+      <div class="dot" style="background:#D85A30"></div>
+      <div class="ti"><div class="tn">食費</div><div class="ts2">食費 · 04/11</div></div>
+      <div class="ta red">-¥120</div>
+      <button class="del" onclick="delTx(1777452880165)">✕</button>
+    </div>
+    <div class="tr">
+      <div class="dot" style="background:#EF9F27"></div>
+      <div class="ti"><div class="tn">日用品</div><div class="ts2">日用品 · 04/11</div></div>
+      <div class="ta red">-¥829</div>
+      <button class="del" onclick="delTx(1777452892958)">✕</button>
+    </div>
+    <div class="tr">
+      <div class="dot" style="background:#D4537E"></div>
+      <div class="ti"><div class="tn">交際費</div><div class="ts2">交際費 / デート · 04/11</div></div>
+      <div class="ta red">-¥5,445</div>
+      <button class="del" onclick="delTx(1777452945611)">✕</button>
+    </div></div></div>
     </div>
 
     <div id="add" class="sec">
       <div class="card">
         <div class="rg">
-          <div class="rb re" id="rt-exp" onclick="selT('expense')">支出</div>
-          <div class="rb" id="rt-inc" onclick="selT('income')">収入</div>
-          <div class="rb" id="rt-inv" onclick="selT('invest')">運用</div>
+          <div class="rb re" id="rt-exp" onclick="selT(&#39;expense&#39;)">支出</div>
+          <div class="rb" id="rt-inc" onclick="selT(&#39;income&#39;)">収入</div>
+          <div class="rb" id="rt-inv" onclick="selT(&#39;invest&#39;)">運用</div>
         </div>
-        <div class="fr"><label class="fl">カテゴリ</label><select id="f-cat" onchange="onCatChange()"></select></div>
+        <div class="fr"><label class="fl">カテゴリ</label><select id="f-cat" onchange="onCatChange()"><option value="食費">食費</option><option value="日用品">日用品</option><option value="交際費">交際費</option></select></div>
         <div class="fr" id="social-sub-row" style="display:none"><label class="fl">交際費の種別</label><select id="f-social-sub">
           <option value="デート">デート</option>
           <option value="飲み会">飲み会</option>
@@ -153,6 +268,7 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
         <button onclick="chDay(1)">→</button>
       </div>
       <div id="day-cats"></div>
+      <div class="card"><div id="day-total"></div></div>
       <div class="card"><div class="st">週次ペース</div><div id="week-sum"></div></div>
     </div>
 
@@ -177,9 +293,9 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
 
     <div id="agg" class="sec">
       <div class="sub-tabs">
-        <div class="sub-tab on" onclick="sAgg('week',this)">週次</div>
-        <div class="sub-tab" onclick="sAgg('month',this)">月次</div>
-        <div class="sub-tab" onclick="sAgg('year',this)">年次</div>
+        <div class="sub-tab on" onclick="sAgg(&#39;week&#39;,this)">週次</div>
+        <div class="sub-tab" onclick="sAgg(&#39;month&#39;,this)">月次</div>
+        <div class="sub-tab" onclick="sAgg(&#39;year&#39;,this)">年次</div>
       </div>
       <div id="agg-content"></div>
     </div>
@@ -233,6 +349,7 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
       </div>
       <div class="card">
         <button class="btn" style="margin-bottom:8px" onclick="syncFromCloud()">クラウドから再同期</button>
+        <button class="btn" style="margin-bottom:8px;background:#185FA5;color:#fff;border:none" onclick="uploadLocalToCloud()">ローカルデータをクラウドへ強制アップロード</button>
         <button class="btn btn-danger" onclick="clearData()">当月データをリセット</button>
       </div>
     </div>
@@ -240,7 +357,7 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="./kakeibo_files/chart.umd.js.ダウンロード"></script>
 <script>
 const CATS={income:['給与','不動産','副業','臨時収入'],expense:['食費','日用品','交際費'],invest:['投資信託購入','預金']};
 const CCOLS={'給与':'#1D9E75','不動産':'#0F6E56','副業':'#5DCAA5','臨時収入':'#9FE1CB','食費':'#D85A30','日用品':'#EF9F27','交際費':'#D4537E','投資信託購入':'#378ADD','預金':'#85B7EB'};
@@ -275,8 +392,39 @@ function ld(k,def){
 function sv(k,v){
   _cache[k]=v;
   try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}
-  const url=GAS_URL+'?action=set&key='+encodeURIComponent(k)+'&value='+encodeURIComponent(JSON.stringify(v));
-  fetch(url).catch(()=>{});
+  fetch(GAS_URL,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({action:'set',key:k,value:JSON.stringify(v)})
+  }).catch(()=>{});
+}
+
+async function uploadLocalToCloud(){
+  showSync('クラウドへアップロード中...');
+  const keys=['kk_buds','kk_fixmaster'];
+  const now=new Date();
+  for(let i=-3;i<=3;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()+i,1);
+    const k=mk(d);
+    keys.push('kk_tx_'+k,'kk_assets_'+k,'kk_cc_'+k,'kk_fixmonth_'+k);
+  }
+  let count=0;
+  await Promise.all(keys.map(async key=>{
+    try{
+      const v=localStorage.getItem(key);
+      if(!v)return;
+      const val=JSON.parse(v);
+      _cache[key]=val;
+      await fetch(GAS_URL,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify({action:'set',key:key,value:v})
+      });
+      count++;
+    }catch(e){}
+  }));
+  hideSync();
+  alert(count+'件のデータをクラウドへアップロードしました。');
 }
 
 async function syncFromCloud(){
@@ -446,7 +594,8 @@ function renderHome(){
   const totalA=assets.fund+assets.deposit;
   const ccs=getCCs();
   const ccNet=ccs.reduce((s,c)=>s+c.amount,0)-fixCcTotal();
-  const net=totalA-ccNet;
+  const opsNet=totalA-ccNet;
+  const net=opsNet-fix-exp;
   document.getElementById('h-inc').textContent=fmt(inc);
   document.getElementById('h-exp').textContent=fmt(exp);
   document.getElementById('h-fix').textContent=fmt(fix);
@@ -513,6 +662,27 @@ function renderDaily(){
   const wIdx=weeks.indexOf(curWeek)+1;
   const wDiff=curWeek.wb-curWeek.actual;
   const wPct=curWeek.wb>0?Math.min(Math.round(curWeek.actual/curWeek.wb*100),100):0;
+  const totalDayBud=Object.values(dayBud.perCat).reduce((s,v)=>s+v,0);
+  const totalDayAct=VCATS.reduce((s,cat)=>s+txs.filter(t=>t.date===dStr&&t.cat===cat).reduce((ss,t)=>ss+t.amount,0),0);
+  const totalDiff=totalDayBud-totalDayAct;
+  const totalPct=totalDayBud>0?Math.min(Math.round(totalDayAct/totalDayBud*100),100):0;
+  const totalBarCol=totalDayAct>totalDayBud?'#D85A30':(totalPct>80?'#EF9F27':'#1D9E75');
+  document.getElementById('day-total').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="font-size:15px;font-weight:600">3項目合計</span>
+      <span style="font-size:13px;color:${totalDiff>=0?'#1D9E75':'#D85A30'};font-weight:600">${totalDiff>=0?'残り':'超過'} ${fmt(Math.abs(totalDiff))}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px">
+      <div style="background:#f5f5f3;border-radius:9px;padding:9px 11px">
+        <div style="font-size:10px;color:#888;margin-bottom:2px">合計予算</div>
+        <div style="font-size:17px;font-weight:600;color:#378ADD">${fmt(totalDayBud)}</div>
+      </div>
+      <div style="background:#f5f5f3;border-radius:9px;padding:9px 11px">
+        <div style="font-size:10px;color:#888;margin-bottom:2px">合計実績</div>
+        <div style="font-size:17px;font-weight:600;color:${totalDayAct>totalDayBud?'#D85A30':'#1D9E75'}">${fmt(totalDayAct)}</div>
+      </div>
+    </div>
+    <div class="bb" style="height:6px"><div class="bar" style="height:6px;width:${totalPct}%;background:${totalBarCol}"></div></div>`;
   document.getElementById('week-sum').innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
       <span style="font-size:14px">${wIdx}週目（${m+1}/${curWeek.s}〜${m+1}/${curWeek.e}）</span>
@@ -653,7 +823,10 @@ function renderAgg(){
       const mCCs=ld('kk_cc_'+mk2,[]);
       const ccTotal=mCCs.reduce((s,c)=>s+c.amount,0);
       const ccFixed=monthFix.filter(f=>f.isCc).reduce((s,f)=>s+Number(f.amount),0);
-      const netCash=(mAssets.fund+mAssets.deposit)-(ccTotal-ccFixed);
+      const opsNetMo=(mAssets.fund+mAssets.deposit)-(ccTotal-ccFixed);
+      const mInc=mTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+      const mVarExp=VCATS.reduce((s,cat)=>s+mTxs.filter(t=>t.type==='expense'&&t.cat===cat).reduce((ss,t)=>ss+t.amount,0),0);
+      const netCash=opsNetMo-housingAmt-mVarExp;
       balanceArr.push(netCash);
     }
 
@@ -661,8 +834,8 @@ function renderAgg(){
     <div class="card">
       <div class="st">支出内訳グラフ（${y}年）</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:11px">
-        ${ALL_EXP_CATS.map(c=>`<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:${EXP_COLORS[c]};display:inline-block"></span>${c}</span>`).join('')}
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#444;display:inline-block;opacity:.5"></span>合計</span>
+        ${ALL_EXP_CATS.map(c=>`<span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:2px;background:${EXP_COLORS[c]};display:inline-block;border-radius:1px"></span>${c}</span>`).join('')}
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:2px;background:#444;display:inline-block;border-radius:1px;opacity:.6"></span>合計</span>
       </div>
       <div style="position:relative;width:100%;height:220px"><canvas id="aggExpChart" role="img" aria-label="${y}年支出内訳グラフ">月別支出内訳</canvas></div>
     </div>
@@ -675,7 +848,7 @@ function renderAgg(){
     </div>
     <div class="card">
       <div class="st">月末残金推移（${y}年）</div>
-      <div style="font-size:11px;color:#888;margin-bottom:10px">月初資産 − 正味クレカ支払いの推移</div>
+      <div style="font-size:11px;color:#888;margin-bottom:10px">運用残金 − 固定費 − 変動支出の推移</div>
       <div style="display:flex;gap:12px;margin-bottom:10px;font-size:11px">
         <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;display:inline-block"></span>残金</span>
       </div>
@@ -697,12 +870,12 @@ function renderAgg(){
 
       const ctxExp=document.getElementById('aggExpChart');
       if(ctxExp){
-        new Chart(ctxExp,{type:'bar',data:{labels,datasets:[
-          {label:'食費',data:catDataMap['食費'],backgroundColor:'#D85A30',borderRadius:2,stack:'exp'},
-          {label:'日用品',data:catDataMap['日用品'],backgroundColor:'#EF9F27',borderRadius:2,stack:'exp'},
-          {label:'交際費',data:catDataMap['交際費'],backgroundColor:'#D4537E',borderRadius:2,stack:'exp'},
-          {label:'住居（固定費）',data:catDataMap['住居（固定費）'],backgroundColor:'#7F77DD',borderRadius:2,stack:'exp'},
-          {label:'合計',data:expTotalArr,type:'line',borderColor:'#444444',borderWidth:2,pointRadius:3,pointBackgroundColor:'#444444',fill:false,tension:0.3,yAxisID:'y',order:0}
+        new Chart(ctxExp,{type:'line',data:{labels,datasets:[
+          {label:'食費',data:catDataMap['食費'],borderColor:'#D85A30',backgroundColor:'#D85A3022',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
+          {label:'日用品',data:catDataMap['日用品'],borderColor:'#EF9F27',backgroundColor:'#EF9F2722',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
+          {label:'交際費',data:catDataMap['交際費'],borderColor:'#D4537E',backgroundColor:'#D4537E22',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
+          {label:'住居（固定費）',data:catDataMap['住居（固定費）'],borderColor:'#7F77DD',backgroundColor:'#7F77DD22',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
+          {label:'合計',data:expTotalArr,borderColor:'#444444',backgroundColor:'#44444422',borderWidth:2.5,pointRadius:4,borderDash:[4,3],fill:false,tension:0.3}
         ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...commonScales}}});
       }
 
@@ -860,6 +1033,7 @@ const manifest={name:'家計簿',short_name:'家計簿',description:'収支・�
 const mBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 const mUrl=URL.createObjectURL(mBlob);
 document.getElementById('manifest-placeholder').href=mUrl;
-</script>
-</body>
-</html>
+</script><div id="sync-bar" style="position: fixed; top: 0px; left: 0px; right: 0px; background: rgb(26, 26, 24); color: rgb(255, 255, 255); text-align: center; font-size: 13px; padding: 8px; z-index: 9999; font-family: inherit; display: none;">クラウドから読み込み中...</div>
+
+
+</body></html>
