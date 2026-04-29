@@ -250,6 +250,35 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
   </div>
 </div>
 
+<!-- Edit Modal -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center">
+  <div style="background:#fff;border-radius:16px 16px 0 0;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;max-height:85vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span style="font-size:16px;font-weight:600">記録を編集</span>
+      <button onclick="closeEdit()" style="background:none;border:none;font-size:20px;color:#888;cursor:pointer;padding:4px 8px">✕</button>
+    </div>
+    <div class="fr"><label class="fl">種別</label>
+      <div class="rg" style="margin-bottom:0">
+        <div class="rb" id="et-exp" onclick="selEditType('expense')">支出</div>
+        <div class="rb" id="et-inc" onclick="selEditType('income')">収入</div>
+        <div class="rb" id="et-inv" onclick="selEditType('invest')">運用</div>
+      </div>
+    </div>
+    <div class="fr" style="margin-top:8px"><label class="fl">カテゴリ</label><select id="e-cat" onchange="onEditCatChange()"></select></div>
+    <div class="fr" id="e-social-sub-row" style="display:none"><label class="fl">交際費の種別</label><select id="e-social-sub">
+      <option value="デート">デート</option>
+      <option value="飲み会">飲み会</option>
+      <option value="エンタメ・旅">エンタメ・旅</option>
+      <option value="ランチ">ランチ</option>
+      <option value="その他">その他</option>
+    </select></div>
+    <div class="fr"><label class="fl">金額 (円)</label><input type="number" id="e-amt" inputmode="numeric"></div>
+    <div class="fr"><label class="fl">メモ</label><input type="text" id="e-memo"></div>
+    <div class="fr"><label class="fl">日付</label><input type="date" id="e-date"></div>
+    <button class="btn" onclick="saveEdit()">保存する</button>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
@@ -404,14 +433,25 @@ function calcWeekBuds(y,m,txs){
   const today=new Date();
   const isCurM=today.getFullYear()===y&&today.getMonth()===m;
   const todayDay=isCurM?today.getDate():dim(y,m);
-  let remaining=totalBud,remWeeks=weeks.length;
+  const totalDays=dim(y,m);
+
+  // cumulative actual before each week
   return weeks.map((w,wi)=>{
-    const wb=Math.round(remaining/remWeeks);
-    let actual=0;
-    txs.forEach(t=>{if(t.type==='expense'&&VCATS.includes(t.cat)){const d=parseInt(t.date.split('-')[2]);if(d>=w.s&&d<=w.e)actual+=t.amount;}});
+    // actual spent before this week (days 1 to w.s-1)
+    const actualBefore=txs.filter(t=>t.type==='expense'&&VCATS.includes(t.cat))
+      .filter(t=>{const d=parseInt(t.date.split('-')[2]);return d<w.s;})
+      .reduce((s,t)=>s+t.amount,0);
+    // remaining days from start of this week to end of month
+    const remDays=totalDays-w.s+1;
+    const wDays=w.e-w.s+1;
+    // weekly budget = (monthBudget - actualBefore) / remDays * wDays
+    const wb=remDays>0?Math.round((totalBud-actualBefore)/remDays*wDays):0;
+    // actual within this week
+    const actual=txs.filter(t=>t.type==='expense'&&VCATS.includes(t.cat))
+      .filter(t=>{const d=parseInt(t.date.split('-')[2]);return d>=w.s&&d<=w.e;})
+      .reduce((s,t)=>s+t.amount,0);
     const done=todayDay>w.e;
-    if(done&&wi<weeks.length-1){remaining=remaining-actual;remWeeks=weeks.length-wi-1;}
-    return{...w,wb,actual,done,daysInW:w.e-w.s+1};
+    return{...w,wb,actual,done,daysInW:wDays};
   });
 }
 function getDayBudget(dateStr){
@@ -423,12 +463,23 @@ function getDayBudget(dateStr){
   if(!w)return{total:0,perCat:{}};
   const buds=getBuds();
   const totalBud=buds.food+buds.daily+buds.social;
-  const dailyTotal=Math.round(w.wb/w.daysInW);
+  // actual spent in this week before today (days w.s to day-1)
+  const weekActualBeforeToday=txs.filter(t=>t.type==='expense'&&VCATS.includes(t.cat))
+    .filter(t=>{const dd=parseInt(t.date.split('-')[2]);return dd>=w.s&&dd<day;})
+    .reduce((s,t)=>s+t.amount,0);
+  // remaining days in week from today
+  const remDaysInWeek=w.e-day+1;
+  // daily budget = (weekBudget - actualBeforeToday) / remainingDaysInWeek
+  const dailyTotal=remDaysInWeek>0?Math.round((w.wb-weekActualBeforeToday)/remDaysInWeek):0;
   const perCat={};
   VCATS.forEach(cat=>{
+    const catActualBefore=txs.filter(t=>t.type==='expense'&&t.cat===cat)
+      .filter(t=>{const dd=parseInt(t.date.split('-')[2]);return dd>=w.s&&dd<day;})
+      .reduce((s,t)=>s+t.amount,0);
     const monthBud=buds[CAT_BUDS[cat]]||0;
-    const ratio=totalBud>0?monthBud/totalBud:0;
-    perCat[cat]=Math.round(dailyTotal*ratio);
+    const catWb=totalBud>0?Math.round(w.wb*(monthBud/totalBud)):0;
+    const remD=remDaysInWeek>0?remDaysInWeek:1;
+    perCat[cat]=Math.round((catWb-catActualBefore)/remD);
   });
   return{total:dailyTotal,perCat};
 }
@@ -485,6 +536,56 @@ function delTx(id){stTxs(getTxs().filter(t=>t.id!==id));renderAll();}
 function delTxDay(id){const key='kk_tx_'+mk(viewDay);sv(key,ld(key,[]).filter(t=>t.id!==id));renderAll();if(document.getElementById('daily').classList.contains('on'))renderDaily();}
 function delSocTx(id,mkStr){const key='kk_tx_'+mkStr;sv(key,ld(key,[]).filter(t=>t.id!==id));renderAll();renderSocial();}
 
+let editingId=null;
+function openEdit(id){
+  const txs=getTxs();
+  const t=txs.find(x=>x.id===id);
+  if(!t)return;
+  editingId=id;
+  selEditType(t.type);
+  document.getElementById('e-cat').value=t.cat;
+  onEditCatChange();
+  if(t.socialSub)document.getElementById('e-social-sub').value=t.socialSub;
+  document.getElementById('e-amt').value=t.amount;
+  document.getElementById('e-memo').value=t.memo;
+  document.getElementById('e-date').value=t.date;
+  const modal=document.getElementById('edit-modal');
+  modal.style.display='flex';
+}
+function closeEdit(){
+  document.getElementById('edit-modal').style.display='none';
+  editingId=null;
+}
+function selEditType(t){
+  ['exp','inc','inv'].forEach(x=>document.getElementById('et-'+x).className='rb');
+  const m={expense:'exp',income:'inc',invest:'inv'};
+  const c={expense:'re',income:'ri',invest:'rv'};
+  document.getElementById('et-'+m[t]).className='rb '+c[t];
+  document.getElementById('e-cat').innerHTML=CATS[t].map(c=>`<option value="${c}">${c}</option>`).join('');
+  document.getElementById('e-cat')._type=t;
+  onEditCatChange();
+}
+function onEditCatChange(){
+  document.getElementById('e-social-sub-row').style.display=document.getElementById('e-cat').value==='交際費'?'block':'none';
+}
+function saveEdit(){
+  if(!editingId)return;
+  const txs=getTxs();
+  const idx=txs.findIndex(x=>x.id===editingId);
+  if(idx<0)return;
+  const amt=parseFloat(document.getElementById('e-amt').value);
+  const cat=document.getElementById('e-cat').value;
+  const memo=document.getElementById('e-memo').value||cat;
+  const date=document.getElementById('e-date').value;
+  const type=document.getElementById('e-cat')._type||txs[idx].type;
+  if(!amt||amt<=0||!date){alert('金額と日付を入力してください');return;}
+  txs[idx]={...txs[idx],type,cat,memo,amount:amt,date};
+  if(cat==='交際費')txs[idx].socialSub=document.getElementById('e-social-sub').value;
+  else delete txs[idx].socialSub;
+  stTxs(txs);
+  closeEdit();
+  renderAll();
+}
 function renderAll(){
   document.getElementById('mlabel').textContent=cur.getFullYear()+'年'+(cur.getMonth()+1)+'月';
   renderHome();
@@ -545,6 +646,7 @@ function renderHome(){
       <div class="dot" style="background:${t.socialSub?SOC_COLS[t.socialSub]:CCOLS[t.cat]||'#888'}"></div>
       <div class="ti"><div class="tn">${t.memo}</div><div class="ts2">${t.cat}${t.socialSub?' / '+t.socialSub:''} · ${t.date.slice(5).replace('-','/')}</div></div>
       <div class="ta ${t.type==='income'?'green':t.type==='invest'?'blue':'red'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div>
+      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(${t.id})">編集</button>
       <button class="del" onclick="delTx(${t.id})">✕</button>
     </div>`).join(''):'<div class="empty">記録なし</div>';
 }
