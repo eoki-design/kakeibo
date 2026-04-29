@@ -765,7 +765,7 @@ function renderAgg(){
         ${ALL_EXP_CATS.map(c=>`<span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:2px;background:${EXP_COLORS[c]};display:inline-block;border-radius:1px"></span>${c}</span>`).join('')}
         <span style="display:flex;align-items:center;gap:4px"><span style="width:16px;height:2px;background:#444;display:inline-block;border-radius:1px;opacity:.6"></span>合計</span>
       </div>
-      <div style="position:relative;width:100%;height:220px"><canvas id="aggExpChart" role="img" aria-label="${y}年支出内訳グラフ">月別支出内訳</canvas></div>
+      <div style="position:relative;width:100%;height:250px"><canvas id="aggExpChart" role="img" aria-label="${y}年支出内訳グラフ">月別支出内訳</canvas></div>
     </div>
     <div class="card">
       <div class="st">収入グラフ（${y}年）</div>
@@ -802,19 +802,41 @@ function renderAgg(){
       const ctxExp=document.getElementById('aggExpChart');
       if(ctxExp){
         new Chart(ctxExp,{type:'line',data:{labels,datasets:[
-          {label:'食費',data:catDataMap['食費'],borderColor:'#D85A30',backgroundColor:'#D85A3022',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
-          {label:'日用品',data:catDataMap['日用品'],borderColor:'#EF9F27',backgroundColor:'#EF9F2722',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
-          {label:'交際費',data:catDataMap['交際費'],borderColor:'#D4537E',backgroundColor:'#D4537E22',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
-          {label:'住居（固定費）',data:catDataMap['住居（固定費）'],borderColor:'#7F77DD',backgroundColor:'#7F77DD22',borderWidth:2,pointRadius:3,fill:false,tension:0.3},
-          {label:'合計',data:expTotalArr,borderColor:'#444444',backgroundColor:'#44444422',borderWidth:2.5,pointRadius:4,borderDash:[4,3],fill:false,tension:0.3}
-        ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...commonScales}}});
+          {label:'食費',data:catDataMap['食費'],borderColor:'#D85A30',backgroundColor:'#D85A3022',borderWidth:2,pointRadius:3,fill:false,tension:0.3,yAxisID:'y'},
+          {label:'日用品',data:catDataMap['日用品'],borderColor:'#EF9F27',backgroundColor:'#EF9F2722',borderWidth:2,pointRadius:3,fill:false,tension:0.3,yAxisID:'y'},
+          {label:'交際費',data:catDataMap['交際費'],borderColor:'#D4537E',backgroundColor:'#D4537E22',borderWidth:2,pointRadius:3,fill:false,tension:0.3,yAxisID:'y'},
+          {label:'住居（固定費）',data:catDataMap['住居（固定費）'],borderColor:'#7F77DD',backgroundColor:'#7F77DD22',borderWidth:2,pointRadius:3,fill:false,tension:0.3,yAxisID:'y'},
+          {label:'合計',data:expTotalArr,borderColor:'#444444',backgroundColor:'#44444422',borderWidth:2.5,pointRadius:4,borderDash:[4,3],fill:false,tension:0.3,yAxisID:'y2'}
+        ]},plugins:[ChartDataLabels],options:{responsive:true,maintainAspectRatio:false,
+          layout:{padding:{top:20}},
+          plugins:{legend:{display:false},
+            datalabels:{
+              display:ctx=>ctx.dataset.label==='合計',
+              anchor:'top',align:'top',
+              color:'#444',
+              font:{size:9,weight:'600'},
+              formatter:v=>{const a=Math.abs(v);return a>=10000?'¥'+(a/10000).toFixed(0)+'万':'¥'+a.toLocaleString('ja-JP');}
+            }},
+          scales:{
+            x:{ticks:{color:'#888',font:{size:10}},grid:{display:false},autoSkip:false,maxRotation:0},
+            y:{position:'left',min:0,max:500000,ticks:{color:'#888',font:{size:10},callback:yFmt},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'内訳',color:'#aaa',font:{size:10}}},
+            y2:{position:'right',ticks:{color:'#888',font:{size:10},callback:yFmt},grid:{display:false},title:{display:true,text:'合計',color:'#666',font:{size:10}},grace:'15%'}
+          }}});
       }
 
       const ctxInc=document.getElementById('aggIncChart');
       if(ctxInc){
-        new Chart(ctxInc,{type:'bar',data:{labels,datasets:[
+        new Chart(ctxInc,{type:'bar',plugins:[ChartDataLabels],data:{labels,datasets:[
           {label:'収入',data:incArr,backgroundColor:'#1D9E75',borderRadius:3}
-        ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...commonScales}}});
+        ]},options:{responsive:true,maintainAspectRatio:false,
+          layout:{padding:{top:20}},
+          plugins:{legend:{display:false},
+            datalabels:{
+              display:true,anchor:'end',align:'top',
+              color:'#0F6E56',font:{size:9,weight:'600'},
+              formatter:v=>{const a=Math.abs(v);return a===0?'':a>=10000?'¥'+(a/10000).toFixed(0)+'万':'¥'+a.toLocaleString('ja-JP');}
+            }},
+          scales:{...commonScales,y:{...commonScales.y,grace:'15%'}}}});
       }
 
       const ctxBal=document.getElementById('aggBalChart');
