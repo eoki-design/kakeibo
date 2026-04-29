@@ -232,6 +232,7 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
         <button class="btn" onclick="saveBudgets()">保存</button>
       </div>
       <div class="card">
+        <button class="btn" style="margin-bottom:8px" onclick="syncFromCloud()">クラウドから再同期</button>
         <button class="btn btn-danger" onclick="clearData()">当月データをリセット</button>
       </div>
     </div>
@@ -254,8 +255,49 @@ let aggChart=null,socChartObj=null;
 function mk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
 function ds(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function gk(){return mk(cur);}
-function ld(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
-function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+const GAS_URL='https://script.google.com/macros/s/AKfycbxy3oJIr6S43E2YbJDMQr0FRr6PEELC25Kykrdc47lLPqHU6_4qW0OIpakbT4r0dDhq/exec';
+const _cache={};
+
+function showSync(msg){
+  let el=document.getElementById('sync-bar');
+  if(!el){el=document.createElement('div');el.id='sync-bar';
+    el.style.cssText='position:fixed;top:0;left:0;right:0;background:#1a1a18;color:#fff;text-align:center;font-size:13px;padding:8px;z-index:9999;font-family:inherit';
+    document.body.appendChild(el);}
+  el.textContent=msg;el.style.display='block';
+}
+function hideSync(){const el=document.getElementById('sync-bar');if(el)el.style.display='none';}
+
+function ld(k,def){
+  if(_cache[k]!==undefined)return _cache[k];
+  try{const v=localStorage.getItem(k);const r=v?JSON.parse(v):def;_cache[k]=r;return r;}catch(e){return def;}
+}
+function sv(k,v){
+  _cache[k]=v;
+  try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}
+  const url=GAS_URL+'?action=set&key='+encodeURIComponent(k)+'&value='+encodeURIComponent(JSON.stringify(v));
+  fetch(url).catch(()=>{});
+}
+
+async function syncFromCloud(){
+  showSync('クラウドから読み込み中...');
+  const keys=['kk_buds','kk_fixmaster'];
+  const now=new Date();
+  for(let i=-2;i<=3;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()+i,1);
+    const k=mk(d);
+    keys.push('kk_tx_'+k,'kk_assets_'+k,'kk_cc_'+k,'kk_fixmonth_'+k);
+  }
+  await Promise.all(keys.map(async key=>{
+    try{
+      const url=GAS_URL+'?action=get&key='+encodeURIComponent(key);
+      const res=await fetch(url);const text=await res.text();
+      if(text){const val=JSON.parse(text);_cache[key]=val;try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+    }catch(e){}
+  }));
+  hideSync();
+  renderAll();
+}
 function fmt(n){return '¥'+Math.round(n).toLocaleString('ja-JP');}
 function dim(y,m){return new Date(y,m+1,0).getDate();}
 function getTxs(){return ld('kk_tx_'+gk(),[]);}
@@ -799,6 +841,7 @@ document.getElementById('f-date').value=ds(new Date());
 selT('expense');viewDay=new Date();socCur=new Date();
 cur=new Date(viewDay.getFullYear(),viewDay.getMonth(),1);
 renderAll();
+syncFromCloud();
 
 if('serviceWorker' in navigator){
   const swCode=`
