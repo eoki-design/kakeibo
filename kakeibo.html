@@ -428,30 +428,34 @@ function weeksOf(y,m){
 }
 function calcWeekBuds(y,m,txs){
   const buds=getBuds();
-  const totalBud=buds.food+buds.daily+buds.social;
+  const totalDays=dim(y,m);
   const weeks=weeksOf(y,m);
   const today=new Date();
   const isCurM=today.getFullYear()===y&&today.getMonth()===m;
-  const todayDay=isCurM?today.getDate():dim(y,m);
-  const totalDays=dim(y,m);
+  const todayDay=isCurM?today.getDate():totalDays;
 
-  // cumulative actual before each week
-  return weeks.map((w,wi)=>{
-    // actual spent before this week (days 1 to w.s-1)
-    const actualBefore=txs.filter(t=>t.type==='expense'&&VCATS.includes(t.cat))
-      .filter(t=>{const d=parseInt(t.date.split('-')[2]);return d<w.s;})
-      .reduce((s,t)=>s+t.amount,0);
-    // remaining days from start of this week to end of month
-    const remDays=totalDays-w.s+1;
+  return weeks.map((w)=>{
     const wDays=w.e-w.s+1;
-    // weekly budget = (monthBudget - actualBefore) / remDays * wDays
-    const wb=remDays>0?Math.round((totalBud-actualBefore)/remDays*wDays):0;
+    // Per-category weekly budget
+    const perCatWb={};
+    VCATS.forEach(cat=>{
+      const monthBud=buds[CAT_BUDS[cat]]||0;
+      // actual before this week for this category
+      const actBefore=txs.filter(t=>t.type==='expense'&&t.cat===cat)
+        .filter(t=>{const d=parseInt(t.date.split('-')[2]);return d<w.s;})
+        .reduce((s,t)=>s+t.amount,0);
+      // remaining days from start of this week to end of month
+      const remDays=totalDays-w.s+1;
+      // weekly budget = (monthBud - actBefore) / remDays * wDays
+      perCatWb[cat]=remDays>0?Math.round((monthBud-actBefore)/remDays*wDays):0;
+    });
+    const wb=Object.values(perCatWb).reduce((s,v)=>s+v,0);
     // actual within this week
     const actual=txs.filter(t=>t.type==='expense'&&VCATS.includes(t.cat))
       .filter(t=>{const d=parseInt(t.date.split('-')[2]);return d>=w.s&&d<=w.e;})
       .reduce((s,t)=>s+t.amount,0);
     const done=todayDay>w.e;
-    return{...w,wb,actual,done,daysInW:wDays};
+    return{...w,wb,actual,done,daysInW:wDays,perCatWb};
   });
 }
 function getDayBudget(dateStr){
@@ -461,26 +465,20 @@ function getDayBudget(dateStr){
   const weeks=calcWeekBuds(y,m,txs);
   const w=weeks.find(w=>day>=w.s&&day<=w.e);
   if(!w)return{total:0,perCat:{}};
-  const buds=getBuds();
-  const totalBud=buds.food+buds.daily+buds.social;
-  // actual spent in this week before today (days w.s to day-1)
-  const weekActualBeforeToday=txs.filter(t=>t.type==='expense'&&VCATS.includes(t.cat))
-    .filter(t=>{const dd=parseInt(t.date.split('-')[2]);return dd>=w.s&&dd<day;})
-    .reduce((s,t)=>s+t.amount,0);
-  // remaining days in week from today
+  // remaining days in week from today (including today)
   const remDaysInWeek=w.e-day+1;
-  // daily budget = (weekBudget - actualBeforeToday) / remainingDaysInWeek
-  const dailyTotal=remDaysInWeek>0?Math.round((w.wb-weekActualBeforeToday)/remDaysInWeek):0;
   const perCat={};
   VCATS.forEach(cat=>{
-    const catActualBefore=txs.filter(t=>t.type==='expense'&&t.cat===cat)
+    const catWb=w.perCatWb[cat]||0;
+    // actual in this week before today
+    const catActBefore=txs.filter(t=>t.type==='expense'&&t.cat===cat)
       .filter(t=>{const dd=parseInt(t.date.split('-')[2]);return dd>=w.s&&dd<day;})
       .reduce((s,t)=>s+t.amount,0);
-    const monthBud=buds[CAT_BUDS[cat]]||0;
-    const catWb=totalBud>0?Math.round(w.wb*(monthBud/totalBud)):0;
+    // daily = (weekBud - actBeforeToday) / remainingDays
     const remD=remDaysInWeek>0?remDaysInWeek:1;
-    perCat[cat]=Math.round((catWb-catActualBefore)/remD);
+    perCat[cat]=Math.round((catWb-catActBefore)/remD);
   });
+  const dailyTotal=Object.values(perCat).reduce((s,v)=>s+v,0);
   return{total:dailyTotal,perCat};
 }
 
