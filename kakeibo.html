@@ -18,7 +18,7 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
 .month-nav button{background:none;border:0.5px solid rgba(0,0,0,0.2);border-radius:7px;padding:5px 12px;cursor:pointer;font-size:14px;color:#1a1a18;font-family:inherit;min-width:36px;min-height:36px}
 .month-nav button:active{background:rgba(0,0,0,0.06)}
 #mlabel{font-size:16px;font-weight:600;min-width:100px;text-align:center}
-.tab-bar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.08);padding:0 8px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-bar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,0.08);padding:0 8px;display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:calc(44px + env(safe-area-inset-top,0px));z-index:99}
 .tab-bar::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;padding:10px 12px;border:none;background:transparent;font-size:12px;color:#888;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;white-space:nowrap;min-height:44px;display:flex;align-items:center}
 .tab.on{color:#1a1a18;font-weight:600;border-bottom-color:#1a1a18}
@@ -704,21 +704,21 @@ function renderAgg(){
     const ALL_EXP_CATS=['食費','日用品','交際費','住居（固定費）'];
     const EXP_COLORS={'食費':'#D85A30','日用品':'#EF9F27','交際費':'#D4537E','住居（固定費）':'#7F77DD'};
 
-    html=`<div class="card"><div class="st">月次集計（${y}年）</div>`;
+    let tableHtml=`<div class="card"><div class="st">月次集計（${y}年）</div>`;
     VCATS.forEach(cat=>{
       const col=CCOLS[cat]||'#888';
-      html+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:${col}"></div><span style="font-size:14px;font-weight:600">${cat}</span></div>`;
+      tableHtml+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:${col}"></div><span style="font-size:14px;font-weight:600">${cat}</span></div>`;
       for(let mo=0;mo<12;mo++){
         const mk2=y+'-'+String(mo+1).padStart(2,'0');
         const moBuds=getBudsForMonth(mk2);
         const monthBud=moBuds[CAT_BUDS[cat]]||0;
         const act=ld('kk_tx_'+mk2,[]).filter(t=>t.type==='expense'&&t.cat===cat).reduce((s,t)=>s+t.amount,0);
-        html+=`<div class="agg-row" ${mo===m?'style="font-weight:600"':''}><div style="font-size:13px">${months[mo]}</div>
+        tableHtml+=`<div class="agg-row" ${mo===m?'style="font-weight:600"':''}><div style="font-size:13px">${months[mo]}</div>
           <div style="font-size:13px;text-align:right"><span style="color:#888">予 ${fmt(monthBud)}</span> / <span style="color:${act>monthBud?'#D85A30':'#1D9E75'};font-weight:600">実 ${fmt(act)}</span></div></div>`;
       }
-      html+='</div>';
+      tableHtml+='</div>';
     });
-    html+='</div>';
+    tableHtml+='</div>';
 
     const labels=[];
     const incArr=[];
@@ -758,7 +758,7 @@ function renderAgg(){
       balanceArr.push(netCash);
     }
 
-    html+=`
+    html=`
     <div class="card">
       <div class="st">支出内訳グラフ（${y}年）</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:11px">
@@ -782,6 +782,7 @@ function renderAgg(){
       </div>
       <div style="position:relative;width:100%;height:220px"><canvas id="aggBalChart" role="img" aria-label="${y}年残金推移グラフ">月末残金推移</canvas></div>
     </div>`;
+    html+=tableHtml;
 
     const yFmt=v=>{
       const av=Math.abs(v);
