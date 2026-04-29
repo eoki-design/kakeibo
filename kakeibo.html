@@ -226,11 +226,19 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
         <button class="btn" style="margin-top:8px" onclick="saveMonthFix()">今月の金額を保存</button>
       </div>
       <div class="card">
-        <div class="st">変動支出予算（月次）</div>
+        <div class="st">変動支出予算</div>
+        <div style="font-size:12px;margin-bottom:12px" id="b-monthly-badge"></div>
+        <div style="font-size:13px;font-weight:600;color:#1a1a18;margin-bottom:8px" id="b-month-label"></div>
         <div class="fr"><label class="fl">食費 (円)</label><input type="number" id="b-food" placeholder="50000" inputmode="numeric"></div>
         <div class="fr"><label class="fl">日用品 (円)</label><input type="number" id="b-daily" placeholder="20000" inputmode="numeric"></div>
         <div class="fr"><label class="fl">交際費 (円)</label><input type="number" id="b-social" placeholder="20000" inputmode="numeric"></div>
-        <button class="btn" onclick="saveBudgets()">保存</button>
+        <button class="btn" onclick="saveBudgets()" style="margin-bottom:6px">今月の予算として保存</button>
+        <button class="btn" style="background:#fff;color:#A32D2D;border:0.5px solid #F09595;margin-bottom:16px" onclick="clearMonthBudget()">今月の個別設定を削除（マスタに戻す）</button>
+        <div style="font-size:13px;font-weight:600;color:#888;margin-bottom:8px;padding-top:12px;border-top:0.5px solid rgba(0,0,0,0.08)">マスタ予算（個別設定がない月に適用）</div>
+        <div class="fr"><label class="fl">食費 (円)</label><input type="number" id="b-master-food" placeholder="50000" inputmode="numeric"></div>
+        <div class="fr"><label class="fl">日用品 (円)</label><input type="number" id="b-master-daily" placeholder="20000" inputmode="numeric"></div>
+        <div class="fr"><label class="fl">交際費 (円)</label><input type="number" id="b-master-social" placeholder="20000" inputmode="numeric"></div>
+        <button class="btn" onclick="saveMasterBudgets()">マスタ予算を保存</button>
       </div>
       <div class="card">
         <button class="btn" style="margin-bottom:8px" onclick="syncFromCloud()">クラウドから再同期</button>
@@ -243,6 +251,7 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
 const CATS={income:['給与','不動産','副業','臨時収入'],expense:['食費','日用品','交際費'],invest:['投資信託購入','預金']};
 const CCOLS={'給与':'#1D9E75','不動産':'#0F6E56','副業':'#5DCAA5','臨時収入':'#9FE1CB','食費':'#D85A30','日用品':'#EF9F27','交際費':'#D4537E','投資信託購入':'#378ADD','預金':'#85B7EB'};
@@ -294,7 +303,7 @@ async function uploadLocalToCloud(){
   for(let i=-3;i<=3;i++){
     const d=new Date(now.getFullYear(),now.getMonth()+i,1);
     const k=mk(d);
-    keys.push('kk_tx_'+k,'kk_assets_'+k,'kk_cc_'+k,'kk_fixmonth_'+k);
+    keys.push('kk_tx_'+k,'kk_assets_'+k,'kk_cc_'+k,'kk_fixmonth_'+k,'kk_buds_'+k);
   }
   let count=0;
   await Promise.all(keys.map(async key=>{
@@ -322,7 +331,7 @@ async function syncFromCloud(){
   for(let i=-2;i<=3;i++){
     const d=new Date(now.getFullYear(),now.getMonth()+i,1);
     const k=mk(d);
-    keys.push('kk_tx_'+k,'kk_assets_'+k,'kk_cc_'+k,'kk_fixmonth_'+k);
+    keys.push('kk_tx_'+k,'kk_assets_'+k,'kk_cc_'+k,'kk_fixmonth_'+k,'kk_buds_'+k);
   }
   await Promise.all(keys.map(async key=>{
     try{
@@ -355,7 +364,19 @@ function fmt(n){return '¥'+Math.round(n).toLocaleString('ja-JP');}
 function dim(y,m){return new Date(y,m+1,0).getDate();}
 function getTxs(){return ld('kk_tx_'+gk(),[]);}
 function stTxs(v){sv('kk_tx_'+gk(),v);}
-function getBuds(){return ld('kk_buds',{food:50000,daily:20000,social:20000});}
+function getBudsMaster(){return ld('kk_buds',{food:50000,daily:20000,social:20000});}
+function getBuds(){
+  const bMaster=getBudsMaster();
+  const monthly=ld('kk_buds_'+gk(),null);
+  if(monthly)return monthly;
+  return bMaster;
+}
+function getBudsForMonth(mkStr){
+  const master=getBudsMaster();
+  const monthly=ld('kk_buds_'+mkStr,null);
+  if(monthly)return monthly;
+  return master;
+}
 function getAssets(){return ld('kk_assets_'+gk(),{fund:0,deposit:0});}
 function getCCs(){return ld('kk_cc_'+gk(),[]);}
 function stCCs(v){sv('kk_cc_'+gk(),v);}
@@ -685,10 +706,12 @@ function renderAgg(){
 
     html=`<div class="card"><div class="st">月次集計（${y}年）</div>`;
     VCATS.forEach(cat=>{
-      const col=CCOLS[cat]||'#888';const monthBud=buds[CAT_BUDS[cat]]||0;
+      const col=CCOLS[cat]||'#888';
       html+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:${col}"></div><span style="font-size:14px;font-weight:600">${cat} （月予算 ${fmt(monthBud)}）</span></div>`;
       for(let mo=0;mo<12;mo++){
         const mk2=y+'-'+String(mo+1).padStart(2,'0');
+        const moBuds=getBudsForMonth(mk2);
+        const monthBud=moBuds[CAT_BUDS[cat]]||0;
         const act=ld('kk_tx_'+mk2,[]).filter(t=>t.type==='expense'&&t.cat===cat).reduce((s,t)=>s+t.amount,0);
         html+=`<div class="agg-row" ${mo===m?'style="font-weight:600"':''}><div style="font-size:13px">${months[mo]}</div>
           <div style="font-size:13px;text-align:right"><span style="color:#888">予 ${fmt(monthBud)}</span> / <span style="color:${act>monthBud?'#D85A30':'#1D9E75'};font-weight:600">実 ${fmt(act)}</span></div></div>`;
@@ -757,7 +780,7 @@ function renderAgg(){
       <div style="display:flex;gap:12px;margin-bottom:10px;font-size:11px">
         <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;display:inline-block"></span>残金</span>
       </div>
-      <div style="position:relative;width:100%;height:180px"><canvas id="aggBalChart" role="img" aria-label="${y}年残金推移グラフ">月末残金推移</canvas></div>
+      <div style="position:relative;width:100%;height:220px"><canvas id="aggBalChart" role="img" aria-label="${y}年残金推移グラフ">月末残金推移</canvas></div>
     </div>`;
 
     const yFmt=v=>{
@@ -793,9 +816,14 @@ function renderAgg(){
 
       const ctxBal=document.getElementById('aggBalChart');
       if(ctxBal){
-        new Chart(ctxBal,{type:'line',data:{labels,datasets:[
-          {label:'残金',data:balanceArr,borderColor:'#378ADD',borderWidth:2.5,pointRadius:4,pointBackgroundColor:balanceArr.map(v=>v>=0?'#378ADD':'#D85A30'),fill:false,tension:0.3,segment:{borderColor:ctx=>ctx.p0.parsed.y<0||ctx.p1.parsed.y<0?'#D85A30':'#378ADD'}}
-        ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        new Chart(ctxBal,{type:'bar',plugins:[ChartDataLabels],data:{labels,datasets:[
+          {label:'残金',data:balanceArr,backgroundColor:balanceArr.map(v=>v>=0?'#378ADD':'#D85A30'),borderRadius:4}
+        ]},options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},
+            datalabels:{display:true,anchor:'end',align:ctx=>ctx.dataset.data[ctx.dataIndex]>=0?'top':'bottom',
+              color:ctx=>ctx.dataset.data[ctx.dataIndex]>=0?'#185FA5':'#993C1D',
+              font:{size:9,weight:'600'},
+              formatter:v=>{const a=Math.abs(v);return (v<0?'-':'')+(a>=10000?'¥'+(a/10000).toFixed(0)+'万':'¥'+a.toLocaleString('ja-JP'));}}},
           scales:{...commonScales,y:{...commonScales.y,ticks:{...commonScales.y.ticks,callback:yFmt}}}}});
       }
 
@@ -900,14 +928,38 @@ function renderCfg(){
       </div>`).join('')+
       `<div class="fix-total"><span style="font-size:14px;font-weight:600;color:#888">合計</span><span style="font-size:16px;font-weight:600;color:#534AB7">${fmt(tot)}</span></div>`;
   }
-  const buds=getBuds();
+  const budMaster=getBudsMaster();
+  const budMonthly=ld('kk_buds_'+gk(),null);
+  const buds=budMonthly||budMaster;
+  document.getElementById('b-month-label').textContent=cur.getFullYear()+'年'+(cur.getMonth()+1)+'月の予算';
   document.getElementById('b-food').value=buds.food;
   document.getElementById('b-daily').value=buds.daily;
   document.getElementById('b-social').value=buds.social;
+  document.getElementById('b-master-food').value=budMaster.food;
+  document.getElementById('b-master-daily').value=budMaster.daily;
+  document.getElementById('b-master-social').value=budMaster.social;
+  const hasMonthly=!!budMonthly;
+  document.getElementById('b-monthly-badge').textContent=hasMonthly?'今月は個別設定中':'今月はマスタ設定を使用中';
+  document.getElementById('b-monthly-badge').style.color=hasMonthly?'#185FA5':'#888';
 }
 function saveBudgets(){
-  sv('kk_buds',{food:parseFloat(document.getElementById('b-food').value)||50000,daily:parseFloat(document.getElementById('b-daily').value)||20000,social:parseFloat(document.getElementById('b-social').value)||20000});
-  renderAll();alert('予算を保存しました');
+  const food=parseFloat(document.getElementById('b-food').value)||50000;
+  const daily=parseFloat(document.getElementById('b-daily').value)||20000;
+  const social=parseFloat(document.getElementById('b-social').value)||20000;
+  sv('kk_buds_'+gk(),{food,daily,social});
+  renderAll();renderCfg();alert(cur.getFullYear()+'年'+(cur.getMonth()+1)+'月の予算を保存しました');
+}
+function saveMasterBudgets(){
+  const food=parseFloat(document.getElementById('b-master-food').value)||50000;
+  const daily=parseFloat(document.getElementById('b-master-daily').value)||20000;
+  const social=parseFloat(document.getElementById('b-master-social').value)||20000;
+  sv('kk_buds',{food,daily,social});
+  renderAll();renderCfg();alert('マスタ予算を保存しました（個別設定がない月に適用）');
+}
+function clearMonthBudget(){
+  localStorage.removeItem('kk_buds_'+gk());
+  delete _cache['kk_buds_'+gk()];
+  renderAll();renderCfg();alert((cur.getMonth()+1)+'月の個別設定を削除しました。マスタ設定に戻ります。');
 }
 function clearData(){
   if(!confirm('当月のデータをすべて削除しますか？'))return;
