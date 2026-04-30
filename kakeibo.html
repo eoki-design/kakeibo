@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<!-- saved from url=(0082)file:///C:/Users/%E5%A4%A7%E6%9C%A8%20%E7%91%9B%E7%99%BB/Downloads/kakeibo_32.html -->
-<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="家計簿">
 <title>家計簿</title>
-<link rel="manifest" href="blob:null/67ab3709-6c1f-488b-b78a-d8dc00fd9529" id="manifest-placeholder">
+<link rel="manifest" href="#" id="manifest-placeholder">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;font-size:15px;color:#1a1a18;overscroll-behavior:none}
@@ -96,195 +96,42 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
   <div class="top-bar">
     <div class="month-nav">
       <button onclick="chM(-1)">←</button>
-      <span id="mlabel">2026年4月</span>
+      <span id="mlabel"></span>
       <button onclick="chM(1)">→</button>
     </div>
   </div>
   <div class="tab-bar">
-    <button class="tab on" onclick="sTab(&#39;home&#39;,this)">ホーム</button>
-    <button class="tab" onclick="sTab(&#39;add&#39;,this)">追加</button>
-    <button class="tab" onclick="sTab(&#39;daily&#39;,this)">日次</button>
-    <button class="tab" onclick="sTab(&#39;social&#39;,this)">交際費</button>
-    <button class="tab" onclick="sTab(&#39;agg&#39;,this)">集計</button>
-    <button class="tab" onclick="sTab(&#39;ops&#39;,this)">運用</button>
-    <button class="tab" onclick="sTab(&#39;cfg&#39;,this)">設定</button>
+    <button class="tab on" onclick="sTab('home',this)">ホーム</button>
+    <button class="tab" onclick="sTab('add',this)">追加</button>
+    <button class="tab" onclick="sTab('daily',this)">日次</button>
+    <button class="tab" onclick="sTab('social',this)">交際費</button>
+    <button class="tab" onclick="sTab('agg',this)">集計</button>
+    <button class="tab" onclick="sTab('ops',this)">運用</button>
+    <button class="tab" onclick="sTab('cfg',this)">設定</button>
   </div>
   <div class="content">
 
     <div id="home" class="sec on">
       <div class="mg">
         <div class="metric"><div class="ml">収入合計</div><div class="mv green" id="h-inc">¥0</div></div>
-        <div class="metric"><div class="ml">支出合計</div><div class="mv red" id="h-exp">¥285,113</div></div>
-        <div class="metric"><div class="ml">固定費合計</div><div class="mv purple" id="h-fix">¥260,345</div></div>
-        <div class="metric"><div class="ml">当月残金</div><div class="mv blue" id="h-net">¥255,117</div></div>
+        <div class="metric"><div class="ml">支出合計</div><div class="mv red" id="h-exp">¥0</div></div>
+        <div class="metric"><div class="ml">固定費合計</div><div class="mv purple" id="h-fix">¥0</div></div>
+        <div class="metric"><div class="ml">当月残金</div><div class="mv blue" id="h-net">¥0</div></div>
       </div>
-      <div class="card"><div class="st">収入内訳</div><div id="h-inc-list"><div class="empty">記録なし</div></div></div>
-      <div class="card"><div class="st">変動支出内訳</div><div id="h-exp-list"><div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:14px;font-weight:500">食費</span>
-        <span style="font-size:12px;color:#1D9E75;font-weight:600">残り ¥25,704</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px">
-        <div style="background:#f5f5f3;border-radius:8px;padding:7px 10px">
-          <div style="font-size:10px;color:#888;margin-bottom:2px">予算</div>
-          <div style="font-size:14px;font-weight:600;color:#378ADD">¥45,000</div>
-        </div>
-        <div style="background:#f5f5f3;border-radius:8px;padding:7px 10px">
-          <div style="font-size:10px;color:#888;margin-bottom:2px">実績</div>
-          <div style="font-size:14px;font-weight:600;color:#1D9E75">¥19,296</div>
-        </div>
-      </div>
-      <div class="bb"><div class="bar" style="width:43%;background:#1D9E75"></div></div>
-    </div><div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:14px;font-weight:500">日用品</span>
-        <span style="font-size:12px;color:#1D9E75;font-weight:600">残り ¥11,229</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px">
-        <div style="background:#f5f5f3;border-radius:8px;padding:7px 10px">
-          <div style="font-size:10px;color:#888;margin-bottom:2px">予算</div>
-          <div style="font-size:14px;font-weight:600;color:#378ADD">¥150,000</div>
-        </div>
-        <div style="background:#f5f5f3;border-radius:8px;padding:7px 10px">
-          <div style="font-size:10px;color:#888;margin-bottom:2px">実績</div>
-          <div style="font-size:14px;font-weight:600;color:#1D9E75">¥138,771</div>
-        </div>
-      </div>
-      <div class="bb"><div class="bar" style="width:93%;background:#EF9F27"></div></div>
-    </div><div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:14px;font-weight:500">交際費</span>
-        <span style="font-size:12px;color:#1D9E75;font-weight:600">残り ¥72,954</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px">
-        <div style="background:#f5f5f3;border-radius:8px;padding:7px 10px">
-          <div style="font-size:10px;color:#888;margin-bottom:2px">予算</div>
-          <div style="font-size:14px;font-weight:600;color:#378ADD">¥200,000</div>
-        </div>
-        <div style="background:#f5f5f3;border-radius:8px;padding:7px 10px">
-          <div style="font-size:10px;color:#888;margin-bottom:2px">実績</div>
-          <div style="font-size:14px;font-weight:600;color:#1D9E75">¥127,046</div>
-        </div>
-      </div>
-      <div class="bb"><div class="bar" style="width:64%;background:#1D9E75"></div></div>
-    </div></div></div>
-      <div class="card"><div class="st">固定費内訳</div><div id="h-fix-list">
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">家賃</div></div>
-      <div class="ta purple">¥90,330</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">水道代<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥4,532</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">電気代<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥5,744</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">ガス代<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥5,818</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">携帯料金<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥7,143</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">コンタクト<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥7,028</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">通信費<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥3,281</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">Spotify<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥1,080</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">NEFLIX<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥1,590</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">エニタイム</div></div>
-      <div class="ta purple">¥8,778</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">薬代<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥9,713</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">LUUP<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥980</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">不動産</div></div>
-      <div class="ta purple">¥75,436</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">日経新聞<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥4,277</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">ライフティ（RAX)<span class="badge-cc">クレカ</span></div></div>
-      <div class="ta purple">¥9,615</div></div>
-      <div class="tr"><div class="dot" style="background:#7F77DD"></div>
-      <div class="ti"><div class="tn">三井住友カードローン</div></div>
-      <div class="ta purple">¥25,000</div></div><div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:0.5px solid rgba(0,0,0,0.1);font-size:14px;font-weight:600">
-        <span style="color:#888">合計</span><span class="purple">¥260,345</span></div></div></div>
-      <div class="card"><div class="st">最近の記録</div><div id="h-tx">
-    <div class="tr">
-      <div class="dot" style="background:#D85A30"></div>
-      <div class="ti"><div class="tn">食費</div><div class="ts2">食費 · 04/14</div></div>
-      <div class="ta red">-¥1,061</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777453082446)">編集</button>
-      <button class="del" onclick="delTx(1777453082446)">✕</button>
-    </div>
-    <div class="tr">
-      <div class="dot" style="background:#D85A30"></div>
-      <div class="ti"><div class="tn">食費</div><div class="ts2">食費 · 04/13</div></div>
-      <div class="ta red">-¥970</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777453070056)">編集</button>
-      <button class="del" onclick="delTx(1777453070056)">✕</button>
-    </div>
-    <div class="tr">
-      <div class="dot" style="background:#888780"></div>
-      <div class="ti"><div class="tn">交際費</div><div class="ts2">交際費 / その他 · 04/12</div></div>
-      <div class="ta red">-¥2,030</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777453046320)">編集</button>
-      <button class="del" onclick="delTx(1777453046320)">✕</button>
-    </div>
-    <div class="tr">
-      <div class="dot" style="background:#EF9F27"></div>
-      <div class="ti"><div class="tn">日用品</div><div class="ts2">日用品 · 04/12</div></div>
-      <div class="ta red">-¥4,645</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777453037597)">編集</button>
-      <button class="del" onclick="delTx(1777453037597)">✕</button>
-    </div>
-    <div class="tr">
-      <div class="dot" style="background:#D85A30"></div>
-      <div class="ti"><div class="tn">食費</div><div class="ts2">食費 · 04/12</div></div>
-      <div class="ta red">-¥4,048</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777453030210)">編集</button>
-      <button class="del" onclick="delTx(1777453030210)">✕</button>
-    </div>
-    <div class="tr">
-      <div class="dot" style="background:#888780"></div>
-      <div class="ti"><div class="tn">交際費</div><div class="ts2">交際費 / その他 · 04/11</div></div>
-      <div class="ta red">-¥3,296</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777453010800)">編集</button>
-      <button class="del" onclick="delTx(1777453010800)">✕</button>
-    </div>
-    <div class="tr">
-      <div class="dot" style="background:#EF9F27"></div>
-      <div class="ti"><div class="tn">交際費</div><div class="ts2">交際費 / 飲み会 · 04/11</div></div>
-      <div class="ta red">-¥4,370</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777452956771)">編集</button>
-      <button class="del" onclick="delTx(1777452956771)">✕</button>
-    </div>
-    <div class="tr">
-      <div class="dot" style="background:#D4537E"></div>
-      <div class="ti"><div class="tn">交際費</div><div class="ts2">交際費 / デート · 04/11</div></div>
-      <div class="ta red">-¥5,445</div>
-      <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEdit(1777452945611)">編集</button>
-      <button class="del" onclick="delTx(1777452945611)">✕</button>
-    </div></div></div>
+      <div class="card"><div class="st">収入内訳</div><div id="h-inc-list"></div></div>
+      <div class="card"><div class="st">変動支出内訳</div><div id="h-exp-list"></div></div>
+      <div class="card"><div class="st">固定費内訳</div><div id="h-fix-list"></div></div>
+      <div class="card"><div class="st">最近の記録</div><div id="h-tx"></div></div>
     </div>
 
     <div id="add" class="sec">
       <div class="card">
         <div class="rg">
-          <div class="rb re" id="rt-exp" onclick="selT(&#39;expense&#39;)">支出</div>
-          <div class="rb" id="rt-inc" onclick="selT(&#39;income&#39;)">収入</div>
-          <div class="rb" id="rt-inv" onclick="selT(&#39;invest&#39;)">運用</div>
+          <div class="rb re" id="rt-exp" onclick="selT('expense')">支出</div>
+          <div class="rb" id="rt-inc" onclick="selT('income')">収入</div>
+          <div class="rb" id="rt-inv" onclick="selT('invest')">運用</div>
         </div>
-        <div class="fr"><label class="fl">カテゴリ</label><select id="f-cat" onchange="onCatChange()"><option value="食費">食費</option><option value="日用品">日用品</option><option value="交際費">交際費</option></select></div>
+        <div class="fr"><label class="fl">カテゴリ</label><select id="f-cat" onchange="onCatChange()"></select></div>
         <div class="fr" id="social-sub-row" style="display:none"><label class="fl">交際費の種別</label><select id="f-social-sub">
           <option value="デート">デート</option>
           <option value="飲み会">飲み会</option>
@@ -331,9 +178,9 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
 
     <div id="agg" class="sec">
       <div class="sub-tabs">
-        <div class="sub-tab on" onclick="sAgg(&#39;week&#39;,this)">週次</div>
-        <div class="sub-tab" onclick="sAgg(&#39;month&#39;,this)">月次</div>
-        <div class="sub-tab" onclick="sAgg(&#39;year&#39;,this)">年次</div>
+        <div class="sub-tab on" onclick="sAgg('week',this)">週次</div>
+        <div class="sub-tab" onclick="sAgg('month',this)">月次</div>
+        <div class="sub-tab" onclick="sAgg('year',this)">年次</div>
       </div>
       <div id="agg-content"></div>
     </div>
@@ -427,9 +274,9 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
     </div>
     <div class="fr"><label class="fl">種別</label>
       <div class="rg" style="margin-bottom:0">
-        <div class="rb" id="et-exp" onclick="selEditType(&#39;expense&#39;)">支出</div>
-        <div class="rb" id="et-inc" onclick="selEditType(&#39;income&#39;)">収入</div>
-        <div class="rb" id="et-inv" onclick="selEditType(&#39;invest&#39;)">運用</div>
+        <div class="rb" id="et-exp" onclick="selEditType('expense')">支出</div>
+        <div class="rb" id="et-inc" onclick="selEditType('income')">収入</div>
+        <div class="rb" id="et-inv" onclick="selEditType('invest')">運用</div>
       </div>
     </div>
     <div class="fr" style="margin-top:8px"><label class="fl">カテゴリ</label><select id="e-cat" onchange="onEditCatChange()"></select></div>
@@ -447,8 +294,8 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
   </div>
 </div>
 
-<script src="./kakeibo_files/chart.umd.js.ダウンロード"></script>
-<script src="./kakeibo_files/chartjs-plugin-datalabels.min.js.ダウンロード"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
 const CATS={income:['給与','不動産','副業','臨時収入'],expense:['食費','日用品','交際費'],invest:['投資信託購入','預金']};
 const CCOLS={'給与':'#1D9E75','不動産':'#0F6E56','副業':'#5DCAA5','臨時収入':'#9FE1CB','食費':'#D85A30','日用品':'#EF9F27','交際費':'#D4537E','投資信託購入':'#378ADD','預金':'#85B7EB'};
@@ -569,7 +416,9 @@ async function syncFromCloud(){
     }catch(e){failed++;}
   }));
   hideSync();
-  alert('同期完了：'+loaded+'件取得、'+failed+'件失敗\n\n1月データ: '+(localStorage.getItem('kk_tx_2026-01')?'あり':'なし'));
+  const has01=localStorage.getItem('kk_tx_2026-01')?'あり':'なし';
+  showSync('同期完了: '+loaded+'件取得 / 1月: '+has01);
+  setTimeout(()=>hideSync(),5000);
   renderAll();
 }
 function fmt(n){return '¥'+Math.round(n).toLocaleString('ja-JP');}
@@ -1375,6 +1224,5 @@ const mBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
 const mUrl=URL.createObjectURL(mBlob);
 document.getElementById('manifest-placeholder').href=mUrl;
 </script>
-
-
-</body></html>
+</body>
+</html>
