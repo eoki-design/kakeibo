@@ -427,7 +427,8 @@ function weeksOf(y,m){
   return wks;
 }
 function calcWeekBuds(y,m,txs){
-  const buds=getBuds();
+  const mkStr=y+'-'+String(m+1).padStart(2,'0');
+  const buds=getBudsForMonth(mkStr);
   const totalDays=dim(y,m);
   const weeks=weeksOf(y,m);
   const today=new Date();
@@ -812,15 +813,13 @@ function renderAgg(){
     html=`<div class="card"><div class="st">週次集計（${y}年${m+1}月）</div>`;
     VCATS.forEach(cat=>{
       const col=CCOLS[cat]||'#888';
-      const monthBud=buds[CAT_BUDS[cat]]||0;
-      const totalBud=buds.food+buds.daily+buds.social;
-      const ratio=totalBud>0?monthBud/totalBud:0;
       html+=`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:${col}"></div><span style="font-size:14px;font-weight:600">${cat}</span></div>`;
       weeks.forEach((w,i)=>{
-        const wBudCat=Math.round(w.wb*ratio);
+        const wBudCat=Math.max(0,w.perCatWb[cat]||0);
         const act=txs.filter(t=>t.type==='expense'&&t.cat===cat).filter(t=>{const d=parseInt(t.date.split('-')[2]);return d>=w.s&&d<=w.e;}).reduce((s,t)=>s+t.amount,0);
+        const diff=wBudCat-act;
         html+=`<div class="agg-row"><div style="font-size:13px">${i+1}週 ${m+1}/${w.s}〜${m+1}/${w.e}</div>
-          <div style="font-size:13px;text-align:right"><span style="color:#888">予 ${fmt(wBudCat)}</span> / <span style="color:${act>wBudCat?'#D85A30':'#1D9E75'};font-weight:600">実 ${fmt(act)}</span></div></div>`;
+          <div style="font-size:13px;text-align:right"><span style="color:#888">予 ${fmt(wBudCat)}</span> / <span style="color:${act>wBudCat?'#D85A30':'#1D9E75'};font-weight:600">実 ${fmt(act)}</span> / <span style="color:${diff>=0?'#1D9E75':'#D85A30'};font-weight:600">${diff>=0?'残':'超'} ${fmt(Math.abs(diff))}</span></div></div>`;
       });
       html+='</div>';
     });
