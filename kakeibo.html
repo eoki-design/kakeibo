@@ -188,9 +188,24 @@ html,body{height:100%;background:#f5f5f3;font-family:-apple-system,BlinkMacSyste
     <div id="ops" class="sec">
       <div class="card">
         <div class="st">月初資産入力</div>
-        <div class="fg">
-          <div class="fr"><label class="fl">投資信託 (円)</label><input type="number" id="o-fund" placeholder="0" inputmode="numeric"></div>
-          <div class="fr"><label class="fl">預金 (円)</label><input type="number" id="o-dep" placeholder="0" inputmode="numeric"></div>
+        <div class="fr"><label class="fl">投資信託 (円)</label><input type="number" id="o-fund" placeholder="0" inputmode="numeric"></div>
+        <div class="fr">
+          <label class="fl">預金 (円)　<span style="font-size:10px;color:#888">複数口座を足し上げて入力できます</span></label>
+          <input type="number" id="o-dep" placeholder="0" inputmode="numeric" style="width:100%;padding:10px 12px;font-size:15px;border:0.5px solid rgba(0,0,0,0.18);border-radius:10px;background:#fff;color:#1a1a18;font-family:inherit;min-height:44px;margin-bottom:8px">
+          <div style="background:#f5f5f3;border-radius:10px;padding:10px;margin-bottom:6px">
+            <div style="font-size:11px;color:#888;margin-bottom:6px">口座を追加して合計</div>
+            <div id="dep-items"></div>
+            <div style="display:flex;gap:6px;margin-top:6px">
+              <input type="number" id="dep-add-input" placeholder="金額を入力" inputmode="numeric" style="flex:1;padding:8px 10px;font-size:14px;border:0.5px solid rgba(0,0,0,0.18);border-radius:8px;background:#fff;color:#1a1a18;font-family:inherit;min-height:40px">
+              <input type="text" id="dep-add-label" placeholder="メモ（任意）" style="flex:1;padding:8px 10px;font-size:14px;border:0.5px solid rgba(0,0,0,0.18);border-radius:8px;background:#fff;color:#1a1a18;font-family:inherit;min-height:40px">
+              <button onclick="addDepItem()" style="padding:8px 14px;background:#1a1a18;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:40px;white-space:nowrap">追加</button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(0,0,0,0.1)">
+              <span style="font-size:13px;color:#888">合計</span>
+              <span style="font-size:15px;font-weight:600;color:#378ADD" id="dep-total">¥0</span>
+            </div>
+            <button onclick="applyDepTotal()" style="width:100%;margin-top:8px;padding:9px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">合計を預金欄に反映</button>
+          </div>
         </div>
         <button class="btn" onclick="saveAssets()">保存</button>
       </div>
@@ -535,12 +550,61 @@ function delTx(id){stTxs(getTxs().filter(t=>t.id!==id));renderAll();}
 function delTxDay(id){const key='kk_tx_'+mk(viewDay);sv(key,ld(key,[]).filter(t=>t.id!==id));renderAll();if(document.getElementById('daily').classList.contains('on'))renderDaily();}
 function delSocTx(id,mkStr){const key='kk_tx_'+mkStr;sv(key,ld(key,[]).filter(t=>t.id!==id));renderAll();renderSocial();}
 
+let depItems=[];
+function renderDepItems(){
+  const total=depItems.reduce((s,i)=>s+i.amt,0);
+  document.getElementById('dep-total').textContent='¥'+total.toLocaleString('ja-JP');
+  document.getElementById('dep-items').innerHTML=depItems.length?depItems.map((item,idx)=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:0.5px solid rgba(0,0,0,0.06)">
+      <div style="flex:1;font-size:13px">${item.label||'口座'+(idx+1)}</div>
+      <div style="font-size:13px;font-weight:600;color:#378ADD">¥${item.amt.toLocaleString('ja-JP')}</div>
+      <button onclick="removeDepItem(${idx})" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;padding:2px 6px">✕</button>
+    </div>`).join(''):'<div style="font-size:12px;color:#aaa;padding:4px 0">まだ追加されていません</div>';
+}
+function addDepItem(){
+  const amt=parseFloat(document.getElementById('dep-add-input').value)||0;
+  const label=document.getElementById('dep-add-label').value.trim();
+  if(!amt){alert('金額を入力してください');return;}
+  depItems.push({amt,label});
+  document.getElementById('dep-add-input').value='';
+  document.getElementById('dep-add-label').value='';
+  renderDepItems();
+}
+function removeDepItem(idx){
+  depItems.splice(idx,1);
+  renderDepItems();
+}
+function applyDepTotal(){
+  const total=depItems.reduce((s,i)=>s+i.amt,0);
+  document.getElementById('o-dep').value=total;
+  depItems=[];
+  renderDepItems();
+}
 let editingId=null;
+let editingKey=null;
+function openEditDay(id){
+  // find tx across current viewDay month
+  const key='kk_tx_'+mk(viewDay);
+  const txs=ld(key,[]);
+  const t=txs.find(x=>x.id===id);
+  if(!t)return;
+  editingId=id;
+  editingKey=key;
+  selEditType(t.type);
+  document.getElementById('e-cat').value=t.cat;
+  onEditCatChange();
+  if(t.socialSub)document.getElementById('e-social-sub').value=t.socialSub;
+  document.getElementById('e-amt').value=t.amount;
+  document.getElementById('e-memo').value=t.memo;
+  document.getElementById('e-date').value=t.date;
+  document.getElementById('edit-modal').style.display='flex';
+}
 function openEdit(id){
   const txs=getTxs();
   const t=txs.find(x=>x.id===id);
   if(!t)return;
   editingId=id;
+  editingKey=null;
   selEditType(t.type);
   document.getElementById('e-cat').value=t.cat;
   onEditCatChange();
@@ -569,7 +633,8 @@ function onEditCatChange(){
 }
 function saveEdit(){
   if(!editingId)return;
-  const txs=getTxs();
+  const key=editingKey||('kk_tx_'+gk());
+  const txs=ld(key,[]);
   const idx=txs.findIndex(x=>x.id===editingId);
   if(idx<0)return;
   const amt=parseFloat(document.getElementById('e-amt').value);
@@ -581,9 +646,10 @@ function saveEdit(){
   txs[idx]={...txs[idx],type,cat,memo,amount:amt,date};
   if(cat==='交際費')txs[idx].socialSub=document.getElementById('e-social-sub').value;
   else delete txs[idx].socialSub;
-  stTxs(txs);
+  sv(key,txs);
   closeEdit();
   renderAll();
+  if(document.getElementById('daily').classList.contains('on'))renderDaily();
 }
 function renderAll(){
   document.getElementById('mlabel').textContent=cur.getFullYear()+'年'+(cur.getMonth()+1)+'月';
@@ -665,7 +731,7 @@ function renderHome(){
       `<div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:0.5px solid rgba(0,0,0,0.1);font-size:14px;font-weight:600">
         <span style="color:#888">合計</span><span class="purple">${fmt(ft)}</span></div>`;
   }
-  const recent=[...txs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  const recent=[...txs].sort((a,b)=>b.id-a.id).slice(0,8);
   document.getElementById('h-tx').innerHTML=recent.length?recent.map(t=>`
     <div class="tr">
       <div class="dot" style="background:${t.socialSub?SOC_COLS[t.socialSub]:CCOLS[t.cat]||'#888'}"></div>
@@ -705,6 +771,7 @@ function renderDaily(){
         <div class="tr" style="padding:7px 0">
           <div class="ti"><div class="tn" style="font-size:13px">${t.memo}${t.socialSub?` <span style="font-size:10px;color:#D4537E">[${t.socialSub}]</span>`:''}</div></div>
           <div style="font-size:13px;color:#D85A30;font-weight:600">${fmt(t.amount)}</div>
+          <button class="del" style="color:#378ADD;font-size:12px;padding:2px 5px" onclick="openEditDay(${t.id})">編集</button>
           <button class="del" onclick="delTxDay(${t.id})">✕</button>
         </div>`).join('')}</div>`:''}
     </div>`;
@@ -1015,6 +1082,7 @@ function renderOps(){
   const assets=getAssets();
   document.getElementById('o-fund').value=assets.fund||'';
   document.getElementById('o-dep').value=assets.deposit||'';
+  depItems=[];renderDepItems();
   const ccs=getCCs();
   document.getElementById('cc-list').innerHTML=ccs.length?ccs.map(c=>`
     <div class="tr"><div class="ti"><div class="tn">${c.name}</div></div>
