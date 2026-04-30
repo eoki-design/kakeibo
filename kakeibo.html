@@ -334,14 +334,36 @@ function sv(k,v){
   const attempt=(n)=>{
     fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body})
       .then(r=>r.text()).then(t=>{
-        if(t!=='ok'&&n<3)setTimeout(()=>attempt(n+1),1000);
-      }).catch(()=>{if(n<3)setTimeout(()=>attempt(n+1),1500);});
+        if(t==='ok'){showSyncStatus('✓ 保存完了','#1D9E75');}
+        else if(n<3){setTimeout(()=>attempt(n+1),1000);}
+        else{showSyncStatus('⚠ クラウド保存失敗','#D85A30');}
+      }).catch(()=>{
+        if(n<3)setTimeout(()=>attempt(n+1),1500);
+        else showSyncStatus('⚠ クラウド保存失敗','#D85A30');
+      });
   };
   attempt(0);
 }
 
-async function uploadLocalToCloud(){
-  showSync('クラウドへアップロード中...');
+let syncStatusTimer=null;
+function showSyncStatus(msg,color){
+  let el=document.getElementById('sync-status');
+  if(!el){
+    el=document.createElement('div');
+    el.id='sync-status';
+    el.style.cssText='position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));right:16px;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;z-index:9999;font-family:inherit;transition:opacity .3s;pointer-events:none';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.background=color;
+  el.style.color='#fff';
+  el.style.opacity='1';
+  if(syncStatusTimer)clearTimeout(syncStatusTimer);
+  syncStatusTimer=setTimeout(()=>{el.style.opacity='0';},2500);
+}
+
+async function uploadLocalToCloud(silent=false){
+  if(!silent)showSync('クラウドへアップロード中...');
   const keys=['kk_buds','kk_fixmaster'];
   const now=new Date();
   for(let i=-3;i<=3;i++){
@@ -364,8 +386,12 @@ async function uploadLocalToCloud(){
       count++;
     }catch(e){}
   }));
-  hideSync();
-  alert(count+'件のデータをクラウドへアップロードしました。');
+  if(!silent){
+    hideSync();
+    alert(count+'件のデータをクラウドへアップロードしました。');
+  } else {
+    hideSync();
+  }
 }
 
 async function syncFromCloud(){
@@ -545,6 +571,7 @@ function addTx(){
   document.getElementById('f-memo').value='';
   renderAll();
   sTab('home',document.querySelectorAll('.tab')[0]);
+  uploadLocalToCloud(true);
 }
 function delTx(id){stTxs(getTxs().filter(t=>t.id!==id));renderAll();}
 function delTxDay(id){const key='kk_tx_'+mk(viewDay);sv(key,ld(key,[]).filter(t=>t.id!==id));renderAll();if(document.getElementById('daily').classList.contains('on'))renderDaily();}
@@ -1122,6 +1149,8 @@ function saveMonthFix(){
   stMonthFix(mf);renderCfg();renderAll();alert('今月の固定費を保存しました');
 }
 function renderCfg(){
+  // Auto backup to cloud every time settings tab is opened
+  uploadLocalToCloud(true);
   const master=getFixMaster();
   document.getElementById('fix-master-list').innerHTML=master.length?master.map(f=>`
     <div style="display:flex;align-items:center;gap:6px;padding:10px 0;border-bottom:0.5px solid rgba(0,0,0,0.07)">
