@@ -416,9 +416,6 @@ async function syncFromCloud(){
     }catch(e){failed++;}
   }));
   hideSync();
-  const has01=localStorage.getItem('kk_tx_2026-01')?'あり':'なし';
-  showSync('同期完了: '+loaded+'件取得 / 1月: '+has01);
-  setTimeout(()=>hideSync(),5000);
   renderAll();
 }
 function fmt(n){return '¥'+Math.round(n).toLocaleString('ja-JP');}
